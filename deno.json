@@ -13,12 +13,20 @@
     "indentWidth": 2,
     "semiColons": true,
     "singleQuote": false,
-    "exclude": [".vscode/**", ".claude/**"]
+    "exclude": [
+      ".vscode/**",
+      ".claude/**"
+    ]
   },
   "lint": {
     "rules": {
-      "tags": ["recommended"]
+      "tags": [
+        "recommended"
+      ]
     },
-    "exclude": [".vscode/**", ".claude/**"]
+    "exclude": [
+      ".vscode/**",
+      ".claude/**"
+    ]
   }
 }
