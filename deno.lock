@@ -1,0 +1,12 @@
+{
+  "version": "5",
+  "specifiers": {
+    "npm:@anthropic-ai/sdk@0.53.0": "0.53.0"
+  },
+  "npm": {
+    "@anthropic-ai/sdk@0.53.0": {
+      "integrity": "sha512-bl2frVo0cgHCXTzQEIHXPH329uQXC4YKBaLBkZmUc59tNiR3GgcGpBZU7mwfyv5tPuU/yT7tGHyoe5AnjN02QA==",
+      "bin": true
+    }
+  }
+}
