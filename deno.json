@@ -1,0 +1,34 @@
+{
+  "tasks": {
+    "fmt": "deno fmt",
+    "fmt:check": "deno fmt --check",
+    "lint": "deno lint",
+    "check": "./scripts/check.sh",
+    "verify": "./scripts/verify-headers.sh",
+    "ci": "deno task fmt:check && deno task lint && deno task check && deno task verify",
+    "pre-commit": "deno task fmt && deno task lint && deno task check"
+  },
+  "fmt": {
+    "lineWidth": 100,
+    "indentWidth": 2,
+    "semiColons": true,
+    "singleQuote": false,
+    "exclude": [
+      ".vscode/**",
+      ".claude/**",
+      "**/*.md"
+    ]
+  },
+  "lint": {
+    "rules": {
+      "tags": [
+        "recommended"
+      ]
+    },
+    "exclude": [
+      ".vscode/**",
+      ".claude/**",
+      "**/*.md"
+    ]
+  }
+}
