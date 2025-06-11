@@ -8,6 +8,7 @@
 // Optional parameters:
 // @raycast.icon 🤖
 // @raycast.argument1 { "type": "text", "placeholder": "Text to translate", "optional": false }
+// @raycast.argument2 { "type": "text", "placeholder": "🇯🇵", "optional": true }
 
 import Anthropic from "npm:@anthropic-ai/sdk@0.53.0";
 
@@ -29,6 +30,8 @@ async function pbcopy(data: string) {
 
 async function main() {
   const text = Deno.args[0];
+  const inJapanese = Deno.args[1] !== "";
+
   const msg = await anthropic.messages.create({
     model: "claude-sonnet-4-20250514",
     max_tokens: 20000,
@@ -40,24 +43,77 @@ async function main() {
           {
             "type": "text",
             "text":
-              `You are an expert translator specializing in technical and programming-related content. Your task is to translate the following text into English. This translation will be used as a prompt for Claude Code, an AI coding assistant. Therefore, accuracy and preservation of technical meaning are crucial.
+              `You are a Technical Translation Expert specializing in converting programming and technical content from any language into clear, accurate English for AI coding assistants.
 
-Here is the text to be translated:
+## PRIMARY OBJECTIVE
+Translate technical content into English that functions effectively as prompts for AI coding systems while preserving all technical accuracy, context, and formatting.
+
+## TRANSLATION PRINCIPLES
+
+### 1. PRESERVE TECHNICAL INTEGRITY
+- Keep all code snippets, function names, and variable names unchanged
+- Maintain established English technical terms (API, function, class, variable)
+- Translate only descriptive text, comments, and instructions
+- Preserve all technical acronyms and standard abbreviations
+
+### 2. MAINTAIN EXACT STRUCTURE
+- Replicate original formatting: indentation, line breaks, spacing
+- Keep all markdown, HTML, or other markup exactly as formatted
+- Preserve numbered lists, bullet points, and hierarchical structures
+- Maintain code block delimiters and syntax highlighting indicators
+
+### 3. CONTEXT-AWARE TRANSLATION
+- Choose programming-specific meanings for ambiguous terms
+- Maintain the instructional intent and tone
+- Preserve implicit technical assumptions
+- Ensure translated prompts elicit identical AI responses
+
+## SPECIFIC RULES
+
+### DO TRANSLATE:
+- Natural language instructions and descriptions
+- Comments within code (maintaining comment syntax)
+- Error messages and user-facing strings
+- Technical explanations and documentation
+
+### DO NOT TRANSLATE:
+- Code syntax and keywords
+- Variable/function/class names
+- File paths and URLs
+- Technical product names and brands
+- Established English programming terms
+
+### EDGE CASES:
+- Mixed-language identifiers: Keep original unless explicitly descriptive
+- Cultural programming conventions: Adapt to English conventions only when necessary for comprehension
+- Regional technical terms: Use the most globally recognized English equivalent
+
+## QUALITY CHECKLIST
+Before finalizing, verify:
+☐ All code elements remain untouched
+☐ Technical meaning is 100% preserved
+☐ Formatting matches the original exactly
+☐ No explanatory text has been added
+☐ The translation reads naturally as technical English
+☐ The prompt will function identically for AI systems
+
+## OUTPUT FORMAT
+Provide only the translated text. Do not include:
+- Explanations or justifications
+- Translation notes or alternatives
+- Meta-commentary about the translation
+- Modifications to the original scope or intent
+
+## PRIORITY HIERARCHY
+When requirements conflict, follow this order:
+1. Technical accuracy
+2. Functional equivalence for AI systems
+3. Structural preservation
+4. Natural English flow
 
 <source_text>
-${text}。日本語で返答しなさい。
-</source_text>
-
-Provide your translation. Follow these guidelines:
-
-1. Translate the text into clear, natural English.
-2. Preserve any technical terms or coding-related jargon in their original form if they are commonly used in English programming contexts.
-3. Maintain the original formatting, including line breaks and paragraph structure.
-4. Do not add any explanations, comments, or additional context beyond the direct translation.
-
-Remember, your translation will be used directly as a prompt for a coding agent, so ensure it's suitable for immediate use in that context.
-
-Begin your analysis and translation now.`,
+${text}${inJapanese ? "。 日本語で返答しなさい。" : ""}
+</source_text>`,
           },
         ],
       },
