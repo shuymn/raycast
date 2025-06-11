@@ -15,7 +15,8 @@
     "singleQuote": false,
     "exclude": [
       ".vscode/**",
-      ".claude/**"
+      ".claude/**",
+      "**/*.md"
     ]
   },
   "lint": {
@@ -26,7 +27,8 @@
     },
     "exclude": [
       ".vscode/**",
-      ".claude/**"
+      ".claude/**",
+      "**/*.md"
     ]
   }
 }
