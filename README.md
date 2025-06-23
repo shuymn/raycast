@@ -31,6 +31,24 @@ Translates text to English using Claude AI for use with Claude Code.
 - Run the translate command via Raycast
 - Translated text is automatically copied to clipboard
 
+### Prompt Enhancer
+
+Transforms basic instructions into well-structured system prompts for AI applications.
+
+**Setup:**
+
+1. Copy `.env.example` to `.env` in the enhance-prompt package
+2. Add your Anthropic API key:
+   ```
+   ANTHROPIC_API_KEY=your_api_key_here
+   ```
+
+**Usage:**
+
+- Select text containing your basic instructions
+- Run the enhance prompt command via Raycast
+- Enhanced prompt is automatically copied to clipboard
+
 ## Requirements
 
 - [Deno](https://deno.land/) runtime

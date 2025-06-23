@@ -31,6 +31,24 @@ Claude Code で使用するために、Claude AI を使ってテキストを英�
 - Raycast で translate コマンドを実行
 - 翻訳されたテキストが自動的にクリップボードにコピーされます
 
+### Prompt Enhancer（プロンプト強化）
+
+基本的な指示を AI アプリケーション用の構造化されたシステムプロンプトに変換します。
+
+**セットアップ:**
+
+1. enhance-prompt パッケージ内の `.env.example` を `.env` にコピー
+2. Anthropic API キーを追加:
+   ```
+   ANTHROPIC_API_KEY=your_api_key_here
+   ```
+
+**使い方:**
+
+- 基本的な指示を含むテキストを選択
+- Raycast で enhance prompt コマンドを実行
+- 強化されたプロンプトが自動的にクリップボードにコピーされます
+
 ## 必要な環境
 
 - [Deno](https://deno.land/) ランタイム
