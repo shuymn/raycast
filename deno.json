@@ -1,7 +1,7 @@
 {
   "tasks": {
     "fmt": "deno fmt",
-    "fmt:check": "deno fmt --check",
+    "fmt:check": "deno fmt --check --config deno.json",
     "lint": "deno lint",
     "check": "./scripts/check.sh",
     "verify": "./scripts/verify-headers.sh",
