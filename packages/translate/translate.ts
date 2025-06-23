@@ -1,4 +1,4 @@
-#!/usr/bin/env deno run --allow-net --allow-env --allow-run --env
+#!/usr/bin/env -S deno run --allow-net --allow-env --allow-run --env
 
 // Required parameters:
 // @raycast.schemaVersion 1
@@ -6,44 +6,21 @@
 // @raycast.mode silent
 
 // Optional parameters:
-// @raycast.icon 🤖
+// @raycast.icon 📜
 // @raycast.argument1 { "type": "text", "placeholder": "Text to translate", "optional": false }
-// @raycast.argument2 { "type": "text", "placeholder": "🇯🇵", "optional": true }
 
-import Anthropic from "npm:@anthropic-ai/sdk@0.53.0";
+import { createAnthropic } from "@ai-sdk/anthropic";
+import { generateText } from "ai";
+import { pbcopy } from "../shared/pbcopy.ts";
+import { bell } from "../shared/bell.ts";
+import { error } from "../shared/log.ts";
 
-const anthropic = new Anthropic({ apiKey: Deno.env.get("ANTHROPIC_API_KEY") });
+const anthropic = createAnthropic({
+  apiKey: Deno.env.get("ANTHROPIC_API_KEY") ?? "",
+});
 
-async function pbcopy(data: string) {
-  const command = new Deno.Command("pbcopy", { stdin: "piped" });
-  const process = command.spawn();
-  const writer = process.stdin.getWriter();
-  await writer.write(new TextEncoder().encode(data));
-  writer.releaseLock();
-  await process.stdin.close();
-  const result = await process.output();
-  if (result.code !== 0) {
-    throw new Error(`pbcopy failed with code ${result.code}`);
-  }
-  console.log("Copied to clipboard");
-}
-
-async function main() {
-  const text = Deno.args[0];
-  const inJapanese = Deno.args[1] !== "";
-
-  const msg = await anthropic.messages.create({
-    model: "claude-sonnet-4-20250514",
-    max_tokens: 20000,
-    temperature: 1,
-    messages: [
-      {
-        "role": "user",
-        "content": [
-          {
-            "type": "text",
-            "text":
-              `You are a Technical Translation Expert specializing in converting programming and technical content from any language into clear, accurate English for AI coding assistants.
+const SYSTEM_PROMPT =
+  `You are a Technical Translation Expert specializing in converting programming and technical content from any language into clear, accurate English for AI coding assistants.
 
 ## PRIMARY OBJECTIVE
 Translate technical content into English that functions effectively as prompts for AI coding systems while preserving all technical accuracy, context, and formatting.
@@ -109,26 +86,23 @@ When requirements conflict, follow this order:
 1. Technical accuracy
 2. Functional equivalence for AI systems
 3. Structural preservation
-4. Natural English flow
+4. Natural English flow`;
 
-<source_text>
-${text}${inJapanese ? "。 日本語で返答しなさい。" : ""}
-</source_text>`,
-          },
-        ],
-      },
-    ],
+async function main() {
+  const input = Deno.args[0];
+
+  const { text } = await generateText({
+    model: anthropic("claude-sonnet-4-20250514"),
+    system: SYSTEM_PROMPT,
+    prompt: `We need to translate the following text into English.
+Source text: ${input}`,
   });
 
-  if (msg.content[0].type !== "text") {
-    throw new Error("Unexpected response type: " + msg.content[0].type);
-  }
-
-  const translatedText = msg.content[0].text.trim();
-  await pbcopy(translatedText);
+  await pbcopy(text);
+  await bell();
 }
 
 main().catch((err) => {
-  console.error(err.message);
+  error(`Error: ${err.message}`);
   Deno.exit(1);
 });
