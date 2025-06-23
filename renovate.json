@@ -1,0 +1,23 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    "config:best-practices",
+    ":timezone(Asia/Tokyo)"
+  ],
+  "labels": [
+    "dependencies"
+  ],
+  "lockFileMaintenance": {
+    "enabled": true
+  },
+  "major": {
+    "minimumReleaseAge": "5 days"
+  },
+  "minor": {
+    "minimumReleaseAge": "3 days"
+  },
+  "patch": {
+    "minimumReleaseAge": "2 days"
+  }
+}
