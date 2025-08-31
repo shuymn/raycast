@@ -11,21 +11,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
 
-      - name: Setup Deno
-        uses: denoland/setup-deno@v2
-        with:
-          deno-version: v2.x
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76 # v2.0.2
 
-      - name: Format check
-        run: deno task fmt:check
+      - name: Install dependencies
+        run: bun install
 
-      - name: Lint
-        run: deno task lint
+      - name: Run biome checks
+        run: bun run check
 
       - name: Type check
-        run: deno task check
+        run: bun run typecheck
 
-      - name: Verify script headers
-        run: deno task verify
+      - name: Verify Raycast headers
+        run: ./scripts/verify-headers.sh
