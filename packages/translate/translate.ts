@@ -1,11 +1,11 @@
-import { createAnthropic } from "@ai-sdk/anthropic";
-import { generateText } from "ai";
+import { createOpenAI } from "@ai-sdk/openai";
+import { generateText, stepCountIs } from "ai";
 import { bell } from "../shared/bell.ts";
 import { error } from "../shared/log.ts";
 import { pbcopy } from "../shared/pbcopy.ts";
 
-const anthropic = createAnthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY ?? "",
+const openai = createOpenAI({
+  apiKey: process.env.OPENAI_API_KEY ?? "",
 });
 
 const SYSTEM_PROMPT = `You are a Technical Translation Expert specializing in converting programming and technical content from any language into clear, accurate English for AI coding assistants.
@@ -106,10 +106,12 @@ async function main() {
 
 async function run(input: string, signal: AbortSignal) {
   const { text } = await generateText({
-    model: anthropic("claude-sonnet-4-20250514"),
+    model: openai("gpt-4.1-nano"),
     system: SYSTEM_PROMPT,
     prompt: `We need to translate the following text into English.
   Source text: ${input}`,
+    temperature: 0.3,
+    stopWhen: stepCountIs(5),
     abortSignal: signal,
   });
 

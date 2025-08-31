@@ -1,12 +1,12 @@
-import { type AnthropicProviderOptions, createAnthropic } from "@ai-sdk/anthropic";
+import { createOpenAI, type OpenAIResponsesProviderOptions } from "@ai-sdk/openai";
 import { generateText } from "ai";
 import { error } from "../shared/log.ts";
 import { notify } from "../shared/notify.ts";
 import { pbcopy } from "../shared/pbcopy.ts";
 import { pbpaste } from "../shared/pbpaste.ts";
 
-const anthropic = createAnthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY ?? "",
+const openai = createOpenAI({
+  apiKey: process.env.OPENAI_API_KEY ?? "",
 });
 
 // SYSTEM_PROMPT is derived from Mastra (https://github.com/mastra-ai/mastra)
@@ -83,14 +83,20 @@ async function run(signal: AbortSignal) {
   const input = await pbpaste({ signal });
 
   const { text } = await generateText({
-    model: anthropic("claude-4-opus-20250514"),
+    model: openai("gpt-5"),
     system: SYSTEM_PROMPT,
-    prompt: `We need to improve the system prompt.
-Current: ${input}`,
+    prompt: `<instruction>
+We need to improve the system prompt.
+</instruction>
+
+<current_prompt>
+${input}
+</current_prompt>`,
     providerOptions: {
-      anthropic: {
-        thinking: { type: "enabled", budgetTokens: 20000 },
-      } satisfies AnthropicProviderOptions,
+      openai: {
+        parallelToolCalls: true,
+        reasoningEffort: "high",
+      } satisfies OpenAIResponsesProviderOptions,
     },
     abortSignal: signal,
   });
