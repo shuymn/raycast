@@ -33,6 +33,6 @@
   },
   "imports": {
     "@ai-sdk/anthropic": "npm:@ai-sdk/anthropic@1.2.12",
-    "ai": "npm:ai@4.3.19"
+    "ai": "npm:ai@5.0.25"
   }
 }
