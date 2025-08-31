@@ -5,43 +5,43 @@ repository.
 
 ## Project Overview
 
-This is a Raycast script commands repository using Deno as the runtime. Scripts are organized in a
+This is a Raycast script commands repository using Bun as the runtime. Scripts are organized in a
 monorepo structure under the `packages/` directory.
 
 ## Development Commands
 
-Scripts are executed directly via Deno with required permissions:
+Scripts are executed directly via Bun:
 
 ```bash
 # Run a script (example with translate.ts)
-deno run --allow-net --allow-env --allow-run --env packages/translate/translate.ts
+bun packages/translate/translate.ts "hello"
 
 # Format code
-deno task fmt
+bun run fmt
 
 # Check formatting
-deno task fmt:check
+bun run fmt:check
 
 # Run linter
-deno task lint
+bun run lint
 
 # Type check all scripts
-deno task check
+bun run typecheck
 
 # Verify Raycast headers
-deno task verify
+bun run verify
 
 # Run all CI checks locally
-deno task ci
+bun run ci
 
 # Format, lint, and check before commit
-deno task pre-commit
+bun run pre-commit
 ```
 
 ## Architecture
 
 - **Structure**: Monorepo with individual script packages in `packages/`
-- **Runtime**: Deno with TypeScript
+- **Runtime**: Bun with TypeScript
 - **Script Format**: Each script must include Raycast metadata header and proper shebang
 - **Environment**: Scripts can use `.env` files for configuration (API keys, etc.)
 
@@ -50,7 +50,7 @@ deno task pre-commit
 Each script must start with:
 
 ```bash
-#!/usr/bin/env deno run --allow-net --allow-env --allow-run --env
+#!/usr/bin/env bun
 ```
 
 Followed by Raycast metadata:
@@ -68,4 +68,4 @@ Followed by Raycast metadata:
 
 ## CI/CD
 
-GitHub Actions CI runs on all pushes to main and pull requests. The same checks can be run locally using deno tasks.
+GitHub Actions CI runs on all pushes to main and pull requests. The same checks can be run locally using Bun scripts.

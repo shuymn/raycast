@@ -51,38 +51,38 @@ Transforms basic instructions into well-structured system prompts for AI applica
 
 ## Requirements
 
-- [Deno](https://deno.land/) runtime
+- [Bun](https://bun.sh/) runtime
 - Raycast app
 - API keys for respective services (see individual script documentation)
 
 ## Development
 
-Scripts are organized in the `packages/` directory. Each script is a standalone Deno TypeScript file
+Scripts are organized in the `packages/` directory. Each script is a standalone TypeScript file
 with Raycast metadata headers.
 
 ### Available Commands
 
 ```bash
 # Format code
-deno task fmt
+bun run fmt
 
 # Check formatting
-deno task fmt:check
+bun run fmt:check
 
 # Run linter
-deno task lint
+bun run lint
 
 # Type check all scripts
-deno task check
+bun run typecheck
 
 # Verify Raycast headers
-deno task verify
+bun run verify
 
 # Run all CI checks
-deno task ci
+bun run ci
 
 # Pre-commit checks
-deno task pre-commit
+bun run pre-commit
 ```
 
 ### Creating a New Script
