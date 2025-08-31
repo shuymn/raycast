@@ -1,4 +1,5 @@
 import { bell } from "./bell.ts";
+import type { SpawnOptions } from "./spawn.ts";
 
 type NotifyOptions = {
   title: string;
@@ -8,16 +9,19 @@ type NotifyOptions = {
 
 export async function notify(
   { title, message, sound: withSound = false }: NotifyOptions,
+  { signal }: SpawnOptions,
 ): Promise<void> {
-  const command = new Deno.Command("osascript", {
-    args: ["-e", `display notification "${message}" with title "${title}"`],
-  });
-  const process = command.spawn();
-  const status = await process.status;
-  if (!status.success) {
-    throw new Error(`Failed to send notification: ${status.code}`);
+  const proc = Bun.spawn(["osascript", "-e", `display notification "${message}" with title "${title}"`], { signal });
+
+  const code = await proc.exited.catch(() => proc.exitCode ?? 1);
+
+  if (code !== 0) {
+    throw new Error(`Failed to send notification: ${code}`);
   }
+
   if (withSound) {
-    await bell();
+    await bell({ signal });
   }
+
+  return;
 }

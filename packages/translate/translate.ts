@@ -1,26 +1,14 @@
-#!/usr/bin/env -S deno run --allow-net --allow-env --allow-run --env
-
-// Required parameters:
-// @raycast.schemaVersion 1
-// @raycast.title Translate
-// @raycast.mode silent
-
-// Optional parameters:
-// @raycast.icon 📜
-// @raycast.argument1 { "type": "text", "placeholder": "Text to translate", "optional": false }
-
 import { createAnthropic } from "@ai-sdk/anthropic";
 import { generateText } from "ai";
-import { pbcopy } from "../shared/pbcopy.ts";
 import { bell } from "../shared/bell.ts";
 import { error } from "../shared/log.ts";
+import { pbcopy } from "../shared/pbcopy.ts";
 
 const anthropic = createAnthropic({
-  apiKey: Deno.env.get("ANTHROPIC_API_KEY") ?? "",
+  apiKey: process.env.ANTHROPIC_API_KEY ?? "",
 });
 
-const SYSTEM_PROMPT =
-  `You are a Technical Translation Expert specializing in converting programming and technical content from any language into clear, accurate English for AI coding assistants.
+const SYSTEM_PROMPT = `You are a Technical Translation Expert specializing in converting programming and technical content from any language into clear, accurate English for AI coding assistants.
 
 ## PRIMARY OBJECTIVE
 Translate technical content into English that functions effectively as prompts for AI coding systems while preserving all technical accuracy, context, and formatting.
@@ -88,21 +76,50 @@ When requirements conflict, follow this order:
 3. Structural preservation
 4. Natural English flow`;
 
-async function main() {
-  const input = Deno.args[0];
+const TIMEOUT = 1 * 60 * 1000; // 1 minute
 
+async function main() {
+  const input = process.argv.slice(2)[0];
+
+  if (input === undefined) {
+    throw new Error("No input provided");
+  }
+
+  const controller = new AbortController();
+  let timer: ReturnType<typeof setTimeout> | undefined;
+
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => {
+      controller.abort();
+      reject(new Error(`Translation timed out after ${TIMEOUT}ms`));
+    }, TIMEOUT);
+  });
+
+  try {
+    await Promise.race([Promise.resolve(run(input, controller.signal)), timeoutPromise]);
+  } finally {
+    if (timer !== undefined) {
+      clearTimeout(timer);
+    }
+  }
+}
+
+async function run(input: string, signal: AbortSignal) {
   const { text } = await generateText({
     model: anthropic("claude-sonnet-4-20250514"),
     system: SYSTEM_PROMPT,
     prompt: `We need to translate the following text into English.
-Source text: ${input}`,
+  Source text: ${input}`,
+    abortSignal: signal,
   });
 
-  await pbcopy(text);
-  await bell();
+  await pbcopy(text, { signal });
+  await bell({ signal });
+
+  return;
 }
 
 main().catch((err) => {
   error(`Error: ${err.message}`);
-  Deno.exit(1);
+  process.exit(1);
 });

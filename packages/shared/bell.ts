@@ -1,8 +1,13 @@
-export async function bell(): Promise<void> {
-  const command = new Deno.Command("afplay", { args: ["/System/Library/Sounds/Hero.aiff"] });
-  const process = command.spawn();
-  const status = await process.status;
-  if (!status.success) {
-    throw new Error(`Failed to play sound: ${status.code}`);
+import type { SpawnOptions } from "./spawn.ts";
+
+export async function bell({ signal }: SpawnOptions): Promise<void> {
+  const proc = Bun.spawn(["afplay", "/System/Library/Sounds/Hero.aiff"], { signal });
+
+  const code = await proc.exited.catch(() => proc.exitCode ?? 1);
+
+  if (code !== 0) {
+    throw new Error(`Failed to play sound: ${code}`);
   }
+
+  return;
 }

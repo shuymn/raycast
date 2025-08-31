@@ -1,0 +1,27 @@
+{
+  "name": "raycast",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "bun": ">=1.0.0"
+  },
+  "scripts": {
+    "check": "biome check .",
+    "check:fix": "biome check --write .",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@ai-sdk/anthropic": "1.2.12",
+    "ai": "4.3.19"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.2.2",
+    "@commitlint/cli": "19.8.1",
+    "@commitlint/config-conventional": "19.8.1",
+    "@tsconfig/bun": "1.0.8",
+    "@types/bun": "1.2.21",
+    "@types/node": "24.3.0",
+    "lefthook": "1.12.3",
+    "typescript": "5.9.2"
+  }
+}

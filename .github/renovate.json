@@ -20,16 +20,16 @@
   "patch": {
     "minimumReleaseAge": "2 days"
   },
-  "customManagers": [
+  "packageRules": [
     {
-      "customType": "regex",
-      "managerFilePatterns": [
-        "deno.json"
+      "description": "Group all AI SDK packages together",
+      "matchPackageNames": [
+        "ai",
+        "/^@ai-sdk\\/.+$/"
       ],
-      "matchStrings": [
-        "\"(?<depName>@?[^\"]+)\":\\s*\"npm:(?<packageName>@?[^@]+)@(?<currentValue>[^\"]+)\""
-      ],
-      "datasourceTemplate": "npm"
+      "groupName": "AI SDK packages",
+      "groupSlug": "ai-sdk",
+      "separateMajorMinor": false
     }
   ]
 }
