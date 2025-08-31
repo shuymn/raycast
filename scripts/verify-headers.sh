@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-for script in packages/**/*.ts; do
+for script in packages/**/*.sh; do
   # Skip files in packages/shared directory
   if [[ "$script" == packages/shared/* ]]; then
     continue
