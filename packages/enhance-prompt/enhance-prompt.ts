@@ -1,22 +1,12 @@
-#!/usr/bin/env -S deno run --allow-net --allow-env --allow-run --env
-
-// Required parameters:
-// @raycast.schemaVersion 1
-// @raycast.title Prompt Enhancer
-// @raycast.mode silent
-
-// Optional parameters:
-// @raycast.icon 🛠️
-
-import { AnthropicProviderOptions, createAnthropic } from "@ai-sdk/anthropic";
+import { type AnthropicProviderOptions, createAnthropic } from "@ai-sdk/anthropic";
 import { generateText } from "ai";
+import { error } from "../shared/log.ts";
+import { notify } from "../shared/notify.ts";
 import { pbcopy } from "../shared/pbcopy.ts";
 import { pbpaste } from "../shared/pbpaste.ts";
-import { notify } from "../shared/notify.ts";
-import { error } from "../shared/log.ts";
 
 const anthropic = createAnthropic({
-  apiKey: Deno.env.get("ANTHROPIC_API_KEY") ?? "",
+  apiKey: process.env.ANTHROPIC_API_KEY ?? "",
 });
 
 // SYSTEM_PROMPT is derived from Mastra (https://github.com/mastra-ai/mastra)
@@ -24,8 +14,7 @@ const anthropic = createAnthropic({
 // Licensed under the Elastic License 2.0 (ELv2)
 // Source: https://github.com/mastra-ai/mastra/blob/c35c5bead269c06917f2cd8ee964c1153d38d195/packages/deployer/src/server/handlers/prompt.ts#L55
 // Modifications: Adjusted output format section to return only the enhanced prompt without additional commentary
-const SYSTEM_PROMPT =
-  `You are an expert system prompt engineer, specialized in analyzing and enhancing instructions to create clear, effective, and comprehensive system prompts. Your goal is to help users transform their basic instructions into well-structured system prompts that will guide AI behavior effectively.
+const SYSTEM_PROMPT = `You are an expert system prompt engineer, specialized in analyzing and enhancing instructions to create clear, effective, and comprehensive system prompts. Your goal is to help users transform their basic instructions into well-structured system prompts that will guide AI behavior effectively.
 Follow these steps to analyze and enhance the instructions:
 1. ANALYSIS PHASE
 - Identify the core purpose and goals
@@ -65,11 +54,33 @@ Ensure the prompt is:
 4. OUTPUT FORMAT
 Provide only the enhanced system prompt in a structured format.
 Do not include any additional commentary or explanations.
-Remember: A good system prompt should be specific enough to guide behavior but flexible enough to handle edge cases. 
+Remember: A good system prompt should be specific enough to guide behavior but flexible enough to handle edge cases.
 Focus on creating prompts that are clear, actionable, and aligned with the intended use case.`;
 
+const TIMEOUT = 1 * 60 * 1000; // 1 minute
+
 async function main() {
-  const input = await pbpaste();
+  const controller = new AbortController();
+  let timer: ReturnType<typeof setTimeout> | undefined;
+
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => {
+      controller.abort();
+      reject(new Error(`Prompt enhancement timed out after ${TIMEOUT}ms`));
+    }, TIMEOUT);
+  });
+
+  try {
+    await Promise.race([Promise.resolve(run(controller.signal)), timeoutPromise]);
+  } finally {
+    if (timer !== undefined) {
+      clearTimeout(timer);
+    }
+  }
+}
+
+async function run(signal: AbortSignal) {
+  const input = await pbpaste({ signal });
 
   const { text } = await generateText({
     model: anthropic("claude-4-opus-20250514"),
@@ -81,13 +92,14 @@ Current: ${input}`,
         thinking: { type: "enabled", budgetTokens: 20000 },
       } satisfies AnthropicProviderOptions,
     },
+    abortSignal: signal,
   });
 
-  await pbcopy(text);
-  await notify({ title: "Prompt Enhanced", message: "Done!", sound: true });
+  await pbcopy(text, { signal });
+  await notify({ title: "Prompt Enhanced", message: "Done!", sound: true }, { signal });
 }
 
 main().catch((err) => {
   error(`Error: ${err.message}`);
-  Deno.exit(1);
+  process.exit(1);
 });
