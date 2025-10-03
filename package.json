@@ -21,7 +21,7 @@
     "@tsconfig/bun": "1.0.8",
     "@types/bun": "1.2.22",
     "@types/node": "24.5.2",
-    "lefthook": "1.13.4",
+    "lefthook": "1.13.6",
     "typescript": "5.9.2"
   }
 }
