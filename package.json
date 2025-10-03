@@ -19,7 +19,7 @@
     "@commitlint/cli": "19.8.1",
     "@commitlint/config-conventional": "19.8.1",
     "@tsconfig/bun": "1.0.8",
-    "@types/bun": "1.2.22",
+    "@types/bun": "1.2.23",
     "@types/node": "24.5.2",
     "lefthook": "1.13.4",
     "typescript": "5.9.2"
