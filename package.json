@@ -15,7 +15,7 @@
     "ai": "5.0.62"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.2.5",
+    "@biomejs/biome": "2.2.6",
     "@commitlint/cli": "20.1.0",
     "@commitlint/config-conventional": "20.0.0",
     "@tsconfig/bun": "1.0.8",
