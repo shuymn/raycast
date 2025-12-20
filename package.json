@@ -11,7 +11,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@ai-sdk/openai": "2.0.87",
+    "@ai-sdk/openai": "2.0.88",
     "ai": "5.0.114"
   },
   "devDependencies": {
