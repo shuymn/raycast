@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@ai-sdk/openai": "3.0.29",
-    "ai": "6.0.86"
+    "ai": "6.0.89"
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.2",
