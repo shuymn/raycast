@@ -11,8 +11,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@ai-sdk/openai": "3.0.29",
-    "ai": "6.0.90"
+    "@ai-sdk/openai": "3.0.30",
+    "ai": "6.0.91"
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.2",
